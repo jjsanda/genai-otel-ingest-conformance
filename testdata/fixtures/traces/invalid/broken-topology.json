@@ -1,0 +1,92 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "tangled-agent"}},
+          {"key": "service.version", "value": {"stringValue": "0.5.0"}},
+          {"key": "telemetry.sdk.name", "value": {"stringValue": "opentelemetry"}},
+          {"key": "telemetry.sdk.language", "value": {"stringValue": "python"}},
+          {"key": "telemetry.sdk.version", "value": {"stringValue": "1.43.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "tangled.instrumentation", "version": "0.1.0"},
+          "spans": [
+            {
+              "traceId": "1111111111111111aaaaaaaaaaaaaaaa",
+              "spanId": "aaaaaaaaaaaaaaa1",
+              "name": "invoke_agent tangler",
+              "kind": 1,
+              "startTimeUnixNano": "1751443700000000000",
+              "endTimeUnixNano": "1751443703000000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "invoke_agent"}},
+                {"key": "gen_ai.agent.name", "value": {"stringValue": "tangler"}}
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "1111111111111111aaaaaaaaaaaaaaaa",
+              "spanId": "aaaaaaaaaaaaaaa2",
+              "parentSpanId": "00000000000000ff",
+              "name": "execute_tool lookup",
+              "kind": 1,
+              "startTimeUnixNano": "1751443700500000000",
+              "endTimeUnixNano": "1751443700800000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "execute_tool"}},
+                {"key": "gen_ai.tool.name", "value": {"stringValue": "lookup"}}
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "1111111111111111aaaaaaaaaaaaaaaa",
+              "spanId": "aaaaaaaaaaaaaaa3",
+              "parentSpanId": "aaaaaaaaaaaaaaa1",
+              "name": "chat gpt-4",
+              "kind": 3,
+              "startTimeUnixNano": "1751443701000000000",
+              "endTimeUnixNano": "1751443709000000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                {"key": "gen_ai.provider.name", "value": {"stringValue": "openai"}},
+                {"key": "gen_ai.request.model", "value": {"stringValue": "gpt-4"}},
+                {"key": "gen_ai.response.model", "value": {"stringValue": "gpt-4-0613"}},
+                {"key": "gen_ai.response.finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "gen_ai.usage.input_tokens", "value": {"intValue": "120"}},
+                {"key": "gen_ai.usage.output_tokens", "value": {"intValue": "40"}}
+              ],
+              "status": {}
+            }
+          ]
+        },
+        {
+          "scope": {"name": "tangled.instrumentation", "version": "0.1.0"},
+          "spans": [
+            {
+              "traceId": "2222222222222222bbbbbbbbbbbbbbbb",
+              "spanId": "bbbbbbbbbbbbbbb1",
+              "parentSpanId": "00000000000000ee",
+              "name": "chat gpt-4",
+              "kind": 3,
+              "startTimeUnixNano": "1751443800000000000",
+              "endTimeUnixNano": "1751443801000000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                {"key": "gen_ai.provider.name", "value": {"stringValue": "openai"}},
+                {"key": "gen_ai.request.model", "value": {"stringValue": "gpt-4"}},
+                {"key": "gen_ai.response.model", "value": {"stringValue": "gpt-4-0613"}},
+                {"key": "gen_ai.response.finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "gen_ai.usage.input_tokens", "value": {"intValue": "80"}},
+                {"key": "gen_ai.usage.output_tokens", "value": {"intValue": "25"}}
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

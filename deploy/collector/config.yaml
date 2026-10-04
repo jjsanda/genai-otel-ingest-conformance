@@ -1,0 +1,54 @@
+# OpenTelemetry Collector: the production-shaped path in front of the
+# conformance gateway.
+#
+# The transform processor demonstrates in-flight remediation: a legacy app
+# emitting the deprecated gen_ai.system attribute gets it renamed to
+# gen_ai.provider.name before the data moves on. That is exactly why the
+# noncompliant demo bypasses this collector and ships straight to the
+# gateway — a conformance check must see what the application actually
+# emits, not what the pipeline papered over. Run the gateway on both sides
+# of a pipeline to see the difference.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 256
+    spike_limit_mib: 64
+  transform/genai_remediation:
+    error_mode: ignore
+    trace_statements:
+      - set(span.attributes["gen_ai.provider.name"], span.attributes["gen_ai.system"]) where span.attributes["gen_ai.system"] != nil and span.attributes["gen_ai.provider.name"] == nil
+      - delete_key(span.attributes, "gen_ai.system") where span.attributes["gen_ai.system"] != nil
+  batch:
+    send_batch_size: 512
+    timeout: 2s
+
+exporters:
+  otlp/gateway:
+    endpoint: gateway:4317
+    tls:
+      insecure: true
+  debug:
+    verbosity: basic
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, transform/genai_remediation, batch]
+      exporters: [otlp/gateway, debug]
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/gateway, debug]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/gateway, debug]

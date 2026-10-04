@@ -1,0 +1,7 @@
+# The gateway image needs only the Go module; keep the build context tiny
+# (worktrees, Python venvs, and test data would otherwise dominate it).
+*
+!go.mod
+!go.sum
+!cmd/
+!internal/

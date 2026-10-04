@@ -1,0 +1,53 @@
+{
+  "resourceLogs": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "sloppy-eval-runner"}},
+          {"key": "service.version", "value": {"stringValue": "0.3.0"}},
+          {"key": "telemetry.sdk.name", "value": {"stringValue": "opentelemetry"}},
+          {"key": "telemetry.sdk.language", "value": {"stringValue": "python"}},
+          {"key": "telemetry.sdk.version", "value": {"stringValue": "1.43.0"}}
+        ]
+      },
+      "scopeLogs": [
+        {
+          "scope": {"name": "sloppy.evals", "version": "0.1.0"},
+          "logRecords": [
+            {
+              "timeUnixNano": "1751443300000000000",
+              "observedTimeUnixNano": "1751443300000000000",
+              "severityNumber": 9,
+              "eventName": "gen_ai.evaluation.result",
+              "attributes": [
+                {"key": "gen_ai.evaluation.score.value", "value": {"stringValue": "0.4"}},
+                {"key": "gen_ai.evaluation.score.label", "value": {"stringValue": "fail"}}
+              ]
+            },
+            {
+              "timeUnixNano": "1751443300100000000",
+              "observedTimeUnixNano": "1751443300100000000",
+              "severityNumber": 17,
+              "severityText": "ERROR",
+              "eventName": "gen_ai.client.operation.exception",
+              "traceId": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+              "spanId": "1a2b3c4d5e6f7081",
+              "attributes": [
+                {"key": "exception.type", "value": {"stringValue": "TimeoutError"}}
+              ]
+            },
+            {
+              "timeUnixNano": "1751443300200000000",
+              "observedTimeUnixNano": "1751443300200000000",
+              "severityNumber": 9,
+              "eventName": "gen_ai.evaluation.results",
+              "attributes": [
+                {"key": "gen_ai.evaluation.name", "value": {"stringValue": "relevance"}}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

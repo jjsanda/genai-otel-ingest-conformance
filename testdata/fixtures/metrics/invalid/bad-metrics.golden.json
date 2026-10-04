@@ -1,0 +1,38 @@
+{
+  "exit_code": 1,
+  "score": 0.6428571428571429,
+  "checks": 14,
+  "passed": 9,
+  "findings": [
+    {
+      "rule_id": "GENAI-METRIC-001",
+      "severity": "ERROR"
+    },
+    {
+      "rule_id": "GENAI-METRIC-001",
+      "severity": "ERROR"
+    },
+    {
+      "rule_id": "GENAI-METRIC-002",
+      "severity": "ERROR",
+      "attribute": "gen_ai.token.type"
+    },
+    {
+      "rule_id": "GENAI-METRIC-002",
+      "severity": "ERROR",
+      "attribute": "gen_ai.token.type"
+    },
+    {
+      "rule_id": "GENAI-METRIC-003",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-METRIC-005",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-METRIC-004",
+      "severity": "INFO"
+    }
+  ]
+}

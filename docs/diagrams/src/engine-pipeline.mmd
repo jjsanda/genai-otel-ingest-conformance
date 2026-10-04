@@ -1,0 +1,19 @@
+flowchart TB
+    IN["OTLP in<br/>gRPC :4317 · HTTP :4318"] --> DEC["decode<br/>(collector pdata types)"]
+
+    DEC --> STREAM["<b>streaming rules</b><br/>per span · resource · metric · event<br/>naming, kinds, types, required attrs,<br/>deprecations, units, event shapes"]
+    DEC --> WIN["<b>trace windows</b><br/>group spans by trace id<br/>close on 10s idle / 60s max age<br/>LRU-bounded, late spans flagged"]
+
+    WIN --> TOPO["<b>topology rules</b><br/>agent → tool ancestry · orphans<br/>roots · child timing · late arrivals"]
+
+    STREAM --> FIND["findings<br/>rule id · severity · remediation ·<br/>doc link pinned to the semconv commit"]
+    TOPO --> FIND
+
+    FIND --> SCORE["score = passed / checked<br/>(per service; INFO never counts)"]
+
+    SCORE --> API["/api/report + embedded UI"]
+    SCORE --> BADGE["/api/badge.svg"]
+    SCORE --> PROM["/metrics (Prometheus)"]
+
+    REG["📌 curated registry<br/>semconv-genai @ b028dce"] -.-> STREAM
+    REG -.-> TOPO

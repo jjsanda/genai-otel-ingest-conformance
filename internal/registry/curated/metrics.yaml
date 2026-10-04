@@ -1,0 +1,133 @@
+# Metric conformance matrices for the GenAI client, server, and agentic
+# instruments. advisory_buckets are the ExplicitBucketBoundaries the docs
+# say the instrument SHOULD be specified with (absent where the docs give
+# no advice, e.g. the agentic duration metrics).
+metrics:
+  gen_ai.client.token.usage:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: "{token}"
+    value_type: int
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name, gen_ai.token.type]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [1, 4, 16, 64, 256, 1024, 4096, 16384, 65536, 262144, 1048576, 4194304, 16777216, 67108864]
+
+  gen_ai.client.operation.duration:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      required: [gen_ai.operation.name]
+      conditionally_required:
+        gen_ai.provider.name: If the operation involves a call to a GenAI provider.
+        error.type: If the operation ended in an error.
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92]
+
+  gen_ai.client.operation.time_to_first_chunk:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    streaming_only: true
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92]
+
+  gen_ai.client.operation.time_per_output_chunk:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    streaming_only: true
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92]
+
+  gen_ai.server.request.duration:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        error.type: If the operation ended in an error.
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92]
+
+  gen_ai.server.time_per_output_token:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.75, 1.0, 2.5]
+
+  gen_ai.server.time_to_first_token:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        server.port: If server.address is set.
+      recommended: [gen_ai.response.model, server.address]
+    advisory_buckets: [0.001, 0.005, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.25, 0.5, 0.75, 1.0, 2.5, 5.0, 7.5, 10.0]
+
+  gen_ai.workflow.duration:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      conditionally_required:
+        gen_ai.workflow.name: If available.
+        error.type: If the operation ended in an error.
+
+  gen_ai.invoke_agent.duration:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      conditionally_required:
+        gen_ai.agent.name: When available.
+        error.type: If the operation ended in an error.
+      recommended: [gen_ai.request.model]
+
+  gen_ai.execute_tool.duration:
+    doc: gen-ai-metrics.md
+    instrument: histogram
+    unit: s
+    value_type: double
+    attributes:
+      required: [gen_ai.tool.name]
+      conditionally_required:
+        gen_ai.agent.name: When applicable.
+        error.type: If the operation ended in an error.
+      recommended: [gen_ai.tool.type]

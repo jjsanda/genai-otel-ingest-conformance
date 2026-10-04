@@ -1,0 +1,14 @@
+# Provenance of the curated conformance registry.
+#
+# Every entry in this directory was transcribed by hand from the OpenTelemetry
+# GenAI semantic conventions at the commit below (the conventions are
+# Development status with no tagged releases, so a commit SHA is the only
+# stable reference). Unit tests cross-check these files against the vendored
+# model YAML in third_party/semconv-genai/, and hack/check-drift.sh watches
+# upstream `main` for movement.
+semconv:
+  repo: https://github.com/open-telemetry/semantic-conventions-genai
+  sha: b028dceecdad117461a785c3af35315e7184e813
+  date: "2026-06-28"
+  core_semconv_version: v1.42.0
+  docs_base: https://github.com/open-telemetry/semantic-conventions-genai/blob/b028dceecdad117461a785c3af35315e7184e813/docs/gen-ai/

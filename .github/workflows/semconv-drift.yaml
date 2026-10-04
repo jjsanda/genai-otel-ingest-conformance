@@ -1,0 +1,39 @@
+name: semconv-drift
+
+# The GenAI semantic conventions are Development status and move without
+# releases. This weekly, non-blocking check reports how far upstream `main`
+# has drifted from the SHA this suite is pinned to.
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    name: Compare pinned model against upstream main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check drift
+        env:
+          GITHUB_TOKEN: ${{ github.token }} # raises the API rate limit for the additions check
+        run: |
+          set +e
+          hack/check-drift.sh >drift.txt 2>&1
+          code=$?
+          cat drift.txt
+          {
+            echo '## GenAI semconv drift check'
+            echo
+            echo '```'
+            tail -c 60000 drift.txt
+            echo '```'
+          } >>"$GITHUB_STEP_SUMMARY"
+          if [ "$code" -eq 3 ]; then
+            echo "::warning title=semconv drift::upstream semantic-conventions-genai has moved since the pinned SHA — see the job summary"
+            exit 0
+          fi
+          exit "$code"

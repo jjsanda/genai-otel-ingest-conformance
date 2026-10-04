@@ -1,0 +1,222 @@
+# Span conformance matrices, one entry per GenAI operation family.
+#
+# operation_names: values of gen_ai.operation.name this entry applies to.
+# kinds.allowed: span kinds permitted by the conventions (other kinds are a
+#   SHOULD-level violation); kinds.preferred documents the primary guidance.
+# name_format: expected span name; "{attr}" placeholders resolve from span
+#   attributes. If the trailing placeholder attribute is absent on the span,
+#   the bare prefix is the expected name.
+# Requirement levels follow the conventions: required (MUST-equivalent),
+# conditionally_required (with the upstream condition text; only conditions
+# that are decidable from telemetry are enforced, the rest are informational),
+# recommended (SHOULD), opt_in (content capture — explicit opt-in only).
+operations:
+  inference:
+    doc: gen-ai-spans.md
+    operation_names: [chat, generate_content, text_completion]
+    kinds: {allowed: [client, internal], preferred: client}
+    name_format: "{gen_ai.operation.name} {gen_ai.request.model}"
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        error.type: If the operation ended in an error.
+        gen_ai.conversation.id: When available.
+        gen_ai.request.choice.count: If available, in the request, and !=1.
+        gen_ai.request.seed: If applicable and if the request includes a seed.
+        gen_ai.request.top_k: If applicable.
+        gen_ai.output.type: When applicable and if the request includes an output format.
+        gen_ai.request.stream: If and only if the request is streaming.
+        gen_ai.prompt.name: When a named prompt template is used.
+        gen_ai.prompt.version: When gen_ai.prompt.name is set and a version is available.
+        server.port: If server.address is set.
+      recommended:
+        - server.address
+        - gen_ai.request.max_tokens
+        - gen_ai.request.temperature
+        - gen_ai.request.top_p
+        - gen_ai.request.stop_sequences
+        - gen_ai.request.frequency_penalty
+        - gen_ai.request.presence_penalty
+        - gen_ai.request.reasoning.level
+        - gen_ai.response.id
+        - gen_ai.response.model
+        - gen_ai.response.finish_reasons
+        - gen_ai.response.time_to_first_chunk
+        - gen_ai.usage.input_tokens
+        - gen_ai.usage.output_tokens
+        - gen_ai.usage.cache_read.input_tokens
+        - gen_ai.usage.cache_creation.input_tokens
+        - gen_ai.usage.reasoning.output_tokens
+        - gen_ai.conversation.compacted
+      opt_in:
+        - gen_ai.system_instructions
+        - gen_ai.input.messages
+        - gen_ai.output.messages
+        - gen_ai.tool.definitions
+        - gen_ai.prompt.variable
+
+  embeddings:
+    doc: gen-ai-spans.md
+    operation_names: [embeddings]
+    kinds: {allowed: [client], preferred: client}
+    name_format: "{gen_ai.operation.name} {gen_ai.request.model}"
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+        error.type: If the operation ended in an error.
+        server.port: If server.address is set.
+      recommended:
+        - server.address
+        - gen_ai.request.encoding_formats
+        - gen_ai.usage.input_tokens
+        - gen_ai.embeddings.dimension.count
+        - gen_ai.response.model
+
+  retrieval:
+    doc: gen-ai-spans.md
+    operation_names: [retrieval]
+    kinds: {allowed: [client], preferred: client}
+    name_format: "retrieval {gen_ai.data_source.id}"
+    attributes:
+      required: [gen_ai.operation.name]
+      conditionally_required:
+        gen_ai.provider.name: When applicable.
+        gen_ai.data_source.id: When applicable.
+        gen_ai.request.model: If available.
+        error.type: If the operation ended in an error.
+        server.port: If server.address is set.
+      recommended:
+        - server.address
+        - gen_ai.retrieval.top_k
+      opt_in:
+        - gen_ai.retrieval.query.text
+        - gen_ai.retrieval.documents
+
+  memory:
+    doc: gen-ai-spans.md
+    operation_names: [search_memory, create_memory, update_memory, upsert_memory, delete_memory, create_memory_store, delete_memory_store]
+    kinds: {allowed: [client, internal], preferred: client}
+    name_format: "{gen_ai.operation.name}"
+    attributes:
+      required: [gen_ai.operation.name]
+      conditionally_required:
+        gen_ai.provider.name: If the operation is handled by a named external GenAI provider or service.
+        gen_ai.memory.store.id: If applicable.
+        gen_ai.memory.record.id: When the operation applies to a specific memory record.
+        error.type: If the operation ended in an error.
+        server.port: If server.address is set.
+      recommended:
+        - server.address
+        - gen_ai.memory.record.count
+      opt_in:
+        - gen_ai.memory.query.text
+        - gen_ai.memory.records
+
+  create_agent:
+    doc: gen-ai-agent-spans.md
+    operation_names: [create_agent]
+    kinds: {allowed: [client], preferred: client}
+    name_format: "create_agent {gen_ai.agent.name}"
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.agent.id: If applicable.
+        gen_ai.agent.name: If provided by the application.
+        gen_ai.agent.description: If provided by the application.
+        gen_ai.agent.version: If provided by the application.
+        gen_ai.request.model: If available.
+        error.type: If the operation ended in an error.
+        server.port: If server.address is set.
+      recommended:
+        - server.address
+      opt_in:
+        - gen_ai.system_instructions
+
+  invoke_agent:
+    doc: gen-ai-agent-spans.md
+    operation_names: [invoke_agent]
+    kinds: {allowed: [client, internal], preferred: internal}
+    name_format: "invoke_agent {gen_ai.agent.name}"
+    attributes:
+      required: [gen_ai.operation.name]
+      required_when_kind:
+        client: [gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.agent.name: When available.
+        gen_ai.agent.description: When available.
+        gen_ai.conversation.id: When available.
+        gen_ai.data_source.id: If applicable.
+        gen_ai.request.choice.count: If available, in the request, and !=1.
+        gen_ai.request.seed: If applicable and if the request includes a seed.
+        gen_ai.output.type: When applicable and if the request includes an output format.
+        error.type: If the operation ended in an error.
+      conditionally_required_when_kind:
+        client:
+          gen_ai.agent.id: If applicable.
+          gen_ai.agent.version: When available.
+          server.port: If server.address is set.
+      recommended:
+        - gen_ai.request.model
+        - gen_ai.request.max_tokens
+        - gen_ai.request.temperature
+        - gen_ai.request.top_p
+        - gen_ai.request.stop_sequences
+        - gen_ai.request.frequency_penalty
+        - gen_ai.request.presence_penalty
+        - gen_ai.response.finish_reasons
+        - gen_ai.usage.input_tokens
+        - gen_ai.usage.output_tokens
+        - gen_ai.usage.cache_read.input_tokens
+        - gen_ai.usage.cache_creation.input_tokens
+      recommended_when_kind:
+        client: [server.address]
+      opt_in:
+        - gen_ai.system_instructions
+        - gen_ai.input.messages
+        - gen_ai.output.messages
+        - gen_ai.tool.definitions
+
+  execute_tool:
+    doc: gen-ai-spans.md
+    operation_names: [execute_tool]
+    kinds: {allowed: [internal], preferred: internal}
+    name_format: "execute_tool {gen_ai.tool.name}"
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.tool.name]
+      conditionally_required:
+        gen_ai.agent.name: When applicable.
+        error.type: If the operation ended in an error.
+      recommended:
+        - gen_ai.tool.call.id
+        - gen_ai.tool.description
+        - gen_ai.tool.type
+      opt_in:
+        - gen_ai.tool.call.arguments
+        - gen_ai.tool.call.result
+
+  invoke_workflow:
+    doc: gen-ai-spans.md
+    operation_names: [invoke_workflow]
+    kinds: {allowed: [internal], preferred: internal}
+    name_format: "invoke_workflow {gen_ai.workflow.name}"
+    attributes:
+      required: [gen_ai.operation.name]
+      conditionally_required:
+        gen_ai.workflow.name: When available.
+        error.type: If the operation ended in an error.
+      opt_in:
+        - gen_ai.input.messages
+        - gen_ai.output.messages
+
+  plan:
+    doc: gen-ai-spans.md
+    operation_names: [plan]
+    kinds: {allowed: [internal], preferred: internal}
+    name_format: "plan {gen_ai.agent.name}"
+    attributes:
+      required: [gen_ai.operation.name]
+      conditionally_required:
+        gen_ai.agent.name: When available.
+        error.type: If the operation ended in an error.

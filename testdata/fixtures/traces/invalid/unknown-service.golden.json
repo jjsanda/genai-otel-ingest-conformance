@@ -1,0 +1,32 @@
+{
+  "exit_code": 1,
+  "score": 0.7894736842105263,
+  "checks": 19,
+  "passed": 15,
+  "findings": [
+    {
+      "rule_id": "GENAI-RES-001",
+      "severity": "ERROR",
+      "attribute": "service.name"
+    },
+    {
+      "rule_id": "GENAI-SPAN-001",
+      "severity": "ERROR",
+      "attribute": "gen_ai.tool.name"
+    },
+    {
+      "rule_id": "GENAI-RES-002",
+      "severity": "WARNING",
+      "attribute": "service.version"
+    },
+    {
+      "rule_id": "GENAI-SPAN-003",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-RES-003",
+      "severity": "INFO",
+      "attribute": "telemetry.sdk.name, telemetry.sdk.language, telemetry.sdk.version"
+    }
+  ]
+}

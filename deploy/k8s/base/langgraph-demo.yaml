@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langgraph-demo
+  labels:
+    app.kubernetes.io/name: langgraph-demo
+    app.kubernetes.io/part-of: genai-conformance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: langgraph-demo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: langgraph-demo
+        app.kubernetes.io/part-of: genai-conformance
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: langgraph-demo
+          image: genai-langgraph-demo:local
+          imagePullPolicy: Never
+          command: ["sh", "-c"]
+          # Batch runner on a slow loop: keeps the framework bridge
+          # producing fresh telemetry.
+          args:
+            - |
+              sleep 10
+              while true; do python -m langgraph_demo.main; sleep 45; done
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://collector:4318
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]

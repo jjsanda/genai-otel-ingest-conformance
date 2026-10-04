@@ -1,0 +1,84 @@
+{
+  "resourceMetrics": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "sloppy-llm-service"}},
+          {"key": "service.version", "value": {"stringValue": "2.1.0"}},
+          {"key": "telemetry.sdk.name", "value": {"stringValue": "opentelemetry"}},
+          {"key": "telemetry.sdk.language", "value": {"stringValue": "go"}},
+          {"key": "telemetry.sdk.version", "value": {"stringValue": "1.36.0"}}
+        ]
+      },
+      "scopeMetrics": [
+        {
+          "scope": {"name": "sloppy.instrumentation", "version": "3.2.1"},
+          "metrics": [
+            {
+              "name": "gen_ai.client.token.usage",
+              "unit": "1",
+              "sum": {
+                "aggregationTemporality": 2,
+                "isMonotonic": true,
+                "dataPoints": [
+                  {
+                    "startTimeUnixNano": "1751443200000000000",
+                    "timeUnixNano": "1751443260000000000",
+                    "asInt": "970",
+                    "attributes": [
+                      {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                      {"key": "gen_ai.provider.name", "value": {"stringValue": "openai"}}
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "gen_ai.client.operation.duration",
+              "unit": "s",
+              "histogram": {
+                "aggregationTemporality": 2,
+                "dataPoints": [
+                  {
+                    "startTimeUnixNano": "1751443200000000000",
+                    "timeUnixNano": "1751443260000000000",
+                    "count": "2",
+                    "sum": 12480,
+                    "max": 7500,
+                    "bucketCounts": ["0", "2"],
+                    "explicitBounds": [1000],
+                    "attributes": [
+                      {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                      {"key": "gen_ai.provider.name", "value": {"stringValue": "openai"}},
+                      {"key": "gen_ai.token.type", "value": {"stringValue": "completion"}}
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "name": "gen_ai.client.tokens.usage",
+              "unit": "{token}",
+              "histogram": {
+                "aggregationTemporality": 2,
+                "dataPoints": [
+                  {
+                    "startTimeUnixNano": "1751443200000000000",
+                    "timeUnixNano": "1751443260000000000",
+                    "count": "1",
+                    "sum": 12,
+                    "bucketCounts": ["1", "0"],
+                    "explicitBounds": [64],
+                    "attributes": [
+                      {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}}
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

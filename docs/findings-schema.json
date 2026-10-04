@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jjsanda/genai-otel-ingest-conformance/docs/findings-schema.json",
+  "title": "GenAI conformance report",
+  "description": "JSON report emitted by `genai-conformance validate --format json` and served live at /api/report. Part of the CI-gate contract: rule_id values and this structure are stable within a minor version.",
+  "type": "object",
+  "required": ["tool", "version", "semconv", "summary", "services", "findings"],
+  "properties": {
+    "tool": {"const": "genai-conformance"},
+    "version": {"type": "string"},
+    "semconv": {
+      "type": "object",
+      "required": ["repo", "sha"],
+      "properties": {
+        "repo": {"type": "string", "format": "uri"},
+        "sha": {"type": "string", "minLength": 40, "maxLength": 40},
+        "date": {"type": "string"}
+      }
+    },
+    "summary": {"$ref": "#/$defs/summary"},
+    "services": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/summary"}
+    },
+    "findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    }
+  },
+  "$defs": {
+    "summary": {
+      "type": "object",
+      "required": ["score", "checks", "passed", "errors", "warnings", "infos"],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "passed/checks over ERROR- and WARNING-level rule evaluations; one evaluation = one rule applied to one applicable entity (span, resource, metric, log record, or assembled trace). INFO findings never affect the score."
+        },
+        "checks": {"type": "integer", "minimum": 0},
+        "passed": {"type": "integer", "minimum": 0},
+        "errors": {"type": "integer", "minimum": 0},
+        "warnings": {"type": "integer", "minimum": 0},
+        "infos": {"type": "integer", "minimum": 0}
+      }
+    },
+    "finding": {
+      "type": "object",
+      "required": ["rule_id", "severity", "signal", "service", "message"],
+      "properties": {
+        "rule_id": {"type": "string", "pattern": "^GENAI-[A-Z]+-[0-9]{3}$"},
+        "severity": {"enum": ["ERROR", "WARNING", "INFO"]},
+        "signal": {"enum": ["trace", "metric", "log"]},
+        "service": {"type": "string"},
+        "message": {"type": "string"},
+        "remediation": {"type": "string"},
+        "doc_url": {"type": "string", "format": "uri", "description": "Documentation link pinned to the semconv commit SHA."},
+        "trace_id": {"type": "string"},
+        "span_id": {"type": "string"},
+        "span_name": {"type": "string"},
+        "metric": {"type": "string"},
+        "event_name": {"type": "string"},
+        "attribute": {"type": "string"}
+      }
+    }
+  }
+}

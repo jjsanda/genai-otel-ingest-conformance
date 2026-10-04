@@ -1,0 +1,98 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "demo-travel-agent"}},
+          {"key": "service.version", "value": {"stringValue": "1.2.0"}},
+          {"key": "telemetry.sdk.name", "value": {"stringValue": "opentelemetry"}},
+          {"key": "telemetry.sdk.language", "value": {"stringValue": "python"}},
+          {"key": "telemetry.sdk.version", "value": {"stringValue": "1.43.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "demo.travel_agent.telemetry", "version": "0.1.0"},
+          "spans": [
+            {
+              "traceId": "5b8efff798038103d269b633813fc60c",
+              "spanId": "eee19b7ec3c1b174",
+              "name": "invoke_agent travel-planner",
+              "kind": 1,
+              "startTimeUnixNano": "1751443200000000000",
+              "endTimeUnixNano": "1751443204500000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "invoke_agent"}},
+                {"key": "gen_ai.agent.name", "value": {"stringValue": "travel-planner"}},
+                {"key": "gen_ai.agent.description", "value": {"stringValue": "Plans trips using weather and documentation tools"}},
+                {"key": "gen_ai.request.model", "value": {"stringValue": "gpt-4"}},
+                {"key": "gen_ai.conversation.id", "value": {"stringValue": "conv_abc123"}},
+                {"key": "gen_ai.usage.input_tokens", "value": {"intValue": "350"}},
+                {"key": "gen_ai.usage.output_tokens", "value": {"intValue": "120"}},
+                {"key": "gen_ai.response.finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}}
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "5b8efff798038103d269b633813fc60c",
+              "spanId": "eee19b7ec3c1b175",
+              "parentSpanId": "eee19b7ec3c1b174",
+              "name": "chat gpt-4",
+              "kind": 3,
+              "startTimeUnixNano": "1751443200100000000",
+              "endTimeUnixNano": "1751443201900000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                {"key": "gen_ai.provider.name", "value": {"stringValue": "openai"}},
+                {"key": "gen_ai.request.model", "value": {"stringValue": "gpt-4"}},
+                {"key": "gen_ai.request.temperature", "value": {"doubleValue": 0.2}},
+                {"key": "gen_ai.request.max_tokens", "value": {"intValue": "512"}},
+                {"key": "gen_ai.response.id", "value": {"stringValue": "chatcmpl-9xYzAbC123"}},
+                {"key": "gen_ai.response.model", "value": {"stringValue": "gpt-4-0613"}},
+                {"key": "gen_ai.response.finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "tool_calls"}]}}},
+                {"key": "gen_ai.usage.input_tokens", "value": {"intValue": "250"}},
+                {"key": "gen_ai.usage.output_tokens", "value": {"intValue": "80"}},
+                {"key": "server.address", "value": {"stringValue": "api.openai.com"}},
+                {"key": "server.port", "value": {"intValue": "443"}}
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "5b8efff798038103d269b633813fc60c",
+              "spanId": "eee19b7ec3c1b176",
+              "parentSpanId": "eee19b7ec3c1b174",
+              "name": "execute_tool get_weather",
+              "kind": 1,
+              "startTimeUnixNano": "1751443202000000000",
+              "endTimeUnixNano": "1751443202350000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "execute_tool"}},
+                {"key": "gen_ai.tool.name", "value": {"stringValue": "get_weather"}},
+                {"key": "gen_ai.tool.call.id", "value": {"stringValue": "call_mszuSIzqtI65i1wAUOE8w5H4"}},
+                {"key": "gen_ai.tool.type", "value": {"stringValue": "function"}},
+                {"key": "gen_ai.tool.description", "value": {"stringValue": "Look up the current weather for a city"}},
+                {"key": "gen_ai.agent.name", "value": {"stringValue": "travel-planner"}}
+              ],
+              "status": {}
+            },
+            {
+              "traceId": "5b8efff798038103d269b633813fc60c",
+              "spanId": "eee19b7ec3c1b177",
+              "parentSpanId": "eee19b7ec3c1b174",
+              "name": "retrieval travel-docs",
+              "kind": 3,
+              "startTimeUnixNano": "1751443202400000000",
+              "endTimeUnixNano": "1751443202700000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "retrieval"}},
+                {"key": "gen_ai.data_source.id", "value": {"stringValue": "travel-docs"}},
+                {"key": "gen_ai.retrieval.top_k", "value": {"intValue": "3"}}
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

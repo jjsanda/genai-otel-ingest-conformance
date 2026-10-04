@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant U as Client
+    participant S as Agent service<br/>(FastAPI)
+    participant AG as Agent loop
+    participant L as LLM provider
+    participant T as Tools
+    participant K as Knowledge base
+    participant E as Evaluator
+
+    U->>S: POST /ask (traceparent →)
+    note over S: SERVER span
+    S->>AG: run agent
+    note over AG: invoke_agent span (INTERNAL)
+    AG->>L: plan the answer
+    note over AG,L: chat {model} span (CLIENT)<br/>tokens · model · finish reason
+    L-->>AG: tool calls
+    AG->>T: execute tools
+    note over T: execute_tool {tool} spans (INTERNAL)
+    AG->>K: retrieve grounding docs
+    note over K: retrieval {source} span (CLIENT)
+    AG->>L: final answer
+    note over AG,L: chat {model} span (CLIENT)
+    L-->>AG: answer
+    AG-->>S: answer + trace/span ids
+    S-->>U: response
+    U->>E: judge the answer
+    E--)S: gen_ai.evaluation.result events<br/>(linked to the invoke_agent span)

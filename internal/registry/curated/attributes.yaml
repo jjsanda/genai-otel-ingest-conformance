@@ -1,0 +1,93 @@
+# GenAI attribute table: wire types, enums, and content sensitivity.
+#
+# type: one of string, int, double, boolean, string_array, any, template_string
+# enum_open: true means custom values are permitted (unknown value is a hint,
+#   not a violation); false means unknown values violate the convention.
+#   Weaver enums are formally non-exhaustive, so closing one here is a
+#   deliberate strictness choice: gen_ai.token.type and gen_ai.output.type
+#   are closed because their values are load-bearing for cost accounting and
+#   routing dashboards, unknown values there are overwhelmingly typos or
+#   deprecated spellings ("completion"), and genuinely new upstream members
+#   arrive via an explicit pin upgrade anyway.
+# min: lower bound for numeric sanity checks.
+# content: true marks attributes that may carry prompt/user content; they are
+#   opt-in per the conventions and their values are never echoed in reports.
+attributes:
+  gen_ai.operation.name:
+    type: string
+    enum: [chat, generate_content, text_completion, embeddings, retrieval, create_agent, invoke_agent, execute_tool, invoke_workflow, plan, search_memory, create_memory, update_memory, upsert_memory, delete_memory, create_memory_store, delete_memory_store]
+    enum_open: true # system-specific names are allowed if documented; unknown values are reported as hints
+  gen_ai.provider.name:
+    type: string
+    enum: [openai, gcp.gen_ai, gcp.vertex_ai, gcp.gemini, anthropic, cohere, azure.ai.inference, azure.ai.openai, ibm.watsonx.ai, aws.bedrock, perplexity, x_ai, deepseek, groq, mistral_ai, moonshot_ai]
+    enum_open: true # acts as a discriminator; custom providers are permitted
+  gen_ai.request.model: {type: string}
+  gen_ai.request.max_tokens: {type: int, min: 0}
+  gen_ai.request.choice.count: {type: int, min: 0}
+  gen_ai.request.temperature: {type: double}
+  gen_ai.request.top_p: {type: double}
+  gen_ai.request.top_k: {type: int, min: 0}
+  gen_ai.request.stop_sequences: {type: string_array}
+  gen_ai.request.frequency_penalty: {type: double}
+  gen_ai.request.presence_penalty: {type: double}
+  gen_ai.request.encoding_formats: {type: string_array}
+  gen_ai.request.seed: {type: int}
+  gen_ai.request.stream: {type: boolean}
+  gen_ai.request.reasoning.level: {type: string}
+  gen_ai.response.id: {type: string}
+  gen_ai.response.model: {type: string}
+  gen_ai.response.finish_reasons: {type: string_array}
+  gen_ai.response.time_to_first_chunk: {type: double, min: 0}
+  gen_ai.usage.input_tokens: {type: int, min: 0}
+  gen_ai.usage.output_tokens: {type: int, min: 0}
+  gen_ai.usage.cache_read.input_tokens: {type: int, min: 0}
+  gen_ai.usage.cache_creation.input_tokens: {type: int, min: 0}
+  gen_ai.usage.reasoning.output_tokens: {type: int, min: 0}
+  gen_ai.token.type:
+    type: string
+    enum: [input, output]
+    enum_open: false
+  gen_ai.conversation.id: {type: string}
+  gen_ai.conversation.compacted: {type: boolean}
+  gen_ai.agent.id: {type: string}
+  gen_ai.agent.name: {type: string}
+  gen_ai.agent.description: {type: string}
+  gen_ai.agent.version: {type: string}
+  gen_ai.tool.name: {type: string}
+  gen_ai.tool.call.id: {type: string}
+  gen_ai.tool.description: {type: string}
+  gen_ai.tool.type: {type: string}
+  gen_ai.tool.call.arguments: {type: any, content: true}
+  gen_ai.tool.call.result: {type: any, content: true}
+  gen_ai.tool.definitions: {type: any, content: true}
+  gen_ai.data_source.id: {type: string}
+  gen_ai.output.type:
+    type: string
+    enum: [text, json, image, speech]
+    enum_open: false
+  gen_ai.embeddings.dimension.count: {type: int, min: 0}
+  gen_ai.retrieval.documents: {type: any, content: true}
+  gen_ai.retrieval.query.text: {type: string, content: true}
+  gen_ai.retrieval.top_k: {type: int, min: 0}
+  gen_ai.memory.store.id: {type: string}
+  gen_ai.memory.record.id: {type: string}
+  gen_ai.memory.record.count: {type: int, min: 0}
+  gen_ai.memory.query.text: {type: string, content: true}
+  gen_ai.memory.records: {type: any, content: true}
+  gen_ai.system_instructions: {type: any, content: true}
+  gen_ai.input.messages: {type: any, content: true}
+  gen_ai.output.messages: {type: any, content: true}
+  gen_ai.evaluation.name: {type: string}
+  gen_ai.evaluation.score.value: {type: double}
+  gen_ai.evaluation.score.label: {type: string}
+  gen_ai.evaluation.explanation: {type: string}
+  gen_ai.prompt.name: {type: string}
+  gen_ai.prompt.version: {type: string}
+  gen_ai.prompt.variable: {type: template_string, content: true}
+  gen_ai.workflow.name: {type: string}
+  error.type: {type: string}
+  server.address: {type: string}
+  server.port: {type: int, min: 0}
+  exception.type: {type: string}
+  exception.message: {type: string}
+  exception.stacktrace: {type: string}

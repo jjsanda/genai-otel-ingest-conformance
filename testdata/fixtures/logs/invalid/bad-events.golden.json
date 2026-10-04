@@ -1,0 +1,31 @@
+{
+  "exit_code": 1,
+  "score": 0.7142857142857143,
+  "checks": 14,
+  "passed": 10,
+  "findings": [
+    {
+      "rule_id": "GENAI-EVENT-001",
+      "severity": "ERROR",
+      "attribute": "gen_ai.evaluation.name"
+    },
+    {
+      "rule_id": "GENAI-EVENT-001",
+      "severity": "ERROR",
+      "attribute": "gen_ai.evaluation.score.value"
+    },
+    {
+      "rule_id": "GENAI-EVENT-002",
+      "severity": "WARNING",
+      "attribute": "gen_ai.response.id"
+    },
+    {
+      "rule_id": "GENAI-EVENT-003",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-EVENT-004",
+      "severity": "WARNING"
+    }
+  ]
+}

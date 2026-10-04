@@ -1,0 +1,80 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: traffic
+  labels:
+    app.kubernetes.io/name: traffic
+    app.kubernetes.io/part-of: genai-conformance
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 600
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: traffic
+        app.kubernetes.io/part-of: genai-conformance
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: traffic
+          image: genai-agent-demo:local
+          imagePullPolicy: Never
+          command: ["sh", "-c"]
+          # Bounded traffic: drives the compliant and the noncompliant demo,
+          # then exits — the e2e harness waits on this Job before asserting
+          # the report. Job pods start whenever the scheduler pleases, so
+          # first wait until every dependency actually listens; otherwise
+          # early spans are exported into a connection-refused void and
+          # silently dropped by the batch processors.
+          args:
+            - |
+              python - <<'PY'
+              import socket
+              import time
+
+              import httpx
+
+              def wait_http(url: str) -> None:
+                  while True:
+                      try:
+                          if httpx.get(url, timeout=2).status_code == 200:
+                              print(f"ready: {url}", flush=True)
+                              return
+                      except Exception:
+                          pass
+                      time.sleep(2)
+
+              def wait_tcp(host: str, port: int) -> None:
+                  while True:
+                      try:
+                          socket.create_connection((host, port), timeout=2).close()
+                          print(f"ready: {host}:{port}", flush=True)
+                          return
+                      except OSError:
+                          time.sleep(2)
+
+              wait_tcp("collector", 4318)
+              wait_tcp("gateway", 4318)
+              wait_http("http://agent-demo:8000/healthz")
+              wait_http("http://agent-demo-noncompliant:8000/healthz")
+              PY
+              python scripts/traffic.py --endpoint http://agent-demo:8000 --conversations 4 --pace 0.3
+              python scripts/traffic.py --endpoint http://agent-demo-noncompliant:8000 --conversations 2 --pace 0.3
+          env:
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://collector:4318
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]

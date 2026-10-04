@@ -1,0 +1,25 @@
+{
+  "description": "Golden contract for the offline cross-language gate (hack/check-demo-conformance.sh): the Python demo's telemetry, exported to OTLP protobuf and validated by the Go engine, must produce exactly these outcomes. Update deliberately when the demo or the rule catalog changes.",
+  "compliant": {
+    "exit_code": 0,
+    "score": 1.0,
+    "allowed_info_rules": ["GENAI-SPAN-014"]
+  },
+  "noncompliant": {
+    "exit_code": 1,
+    "score_below": 0.8,
+    "rule_ids": [
+      "GENAI-RES-001",
+      "GENAI-RES-002",
+      "GENAI-SPAN-001",
+      "GENAI-SPAN-003",
+      "GENAI-SPAN-005",
+      "GENAI-SPAN-006",
+      "GENAI-SPAN-008",
+      "GENAI-SPAN-009",
+      "GENAI-SPAN-010",
+      "GENAI-SPAN-012",
+      "GENAI-SPAN-015"
+    ]
+  }
+}

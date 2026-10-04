@@ -1,0 +1,58 @@
+[
+  {
+    "id": "paris-facts-math",
+    "question": "What is the population of Paris? Also compute 12*7 for my notes.",
+    "expected_answer_fragment": "Planning notes for Paris",
+    "expected_tools": ["city_facts", "calculator"],
+    "grounded_in": ["paris-overview", "paris-food"]
+  },
+  {
+    "id": "rome-division",
+    "question": "Tell me about Rome and calculate 100/4 for the group split.",
+    "expected_answer_fragment": "Planning notes for Rome",
+    "expected_tools": ["city_facts", "calculator"],
+    "grounded_in": ["rome-overview", "rome-history"]
+  },
+  {
+    "id": "tokyo-day",
+    "question": "Plan a day in Tokyo for me.",
+    "expected_answer_fragment": "Planning notes for Tokyo",
+    "expected_tools": ["city_facts"],
+    "grounded_in": ["tokyo-overview", "tokyo-transport"]
+  },
+  {
+    "id": "prague-currency",
+    "question": "What currency is used in Prague?",
+    "expected_answer_fragment": "Planning notes for Prague",
+    "expected_tools": ["city_facts"],
+    "grounded_in": ["prague-overview", "prague-castle"]
+  },
+  {
+    "id": "barcelona-budget-math",
+    "question": "How much is (3+4)*5 for my Barcelona budget?",
+    "expected_answer_fragment": "Planning notes for Barcelona",
+    "expected_tools": ["city_facts", "calculator"],
+    "grounded_in": ["barcelona-overview"]
+  },
+  {
+    "id": "london-highlights",
+    "question": "Give me the highlights of London.",
+    "expected_answer_fragment": "Planning notes for London",
+    "expected_tools": ["city_facts"],
+    "grounded_in": ["london-overview"]
+  },
+  {
+    "id": "vienna-sanity",
+    "question": "Vienna trip: what should I see? Compute 2+2 as a sanity check.",
+    "expected_answer_fragment": "Planning notes for Vienna",
+    "expected_tools": ["city_facts", "calculator"],
+    "grounded_in": ["vienna-overview"]
+  },
+  {
+    "id": "europe-budget-tips",
+    "question": "Any general budget tips for travelling around Europe?",
+    "expected_answer_fragment": "Planning notes for your trip",
+    "expected_tools": [],
+    "grounded_in": ["budget-tips"]
+  }
+]

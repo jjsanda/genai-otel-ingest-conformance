@@ -1,0 +1,28 @@
+{
+  "exit_code": 0,
+  "score": 0.9193548387096774,
+  "checks": 62,
+  "passed": 57,
+  "findings": [
+    {
+      "rule_id": "GENAI-TRACE-001",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-TRACE-002",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-TRACE-002",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-TRACE-003",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-TRACE-004",
+      "severity": "WARNING"
+    }
+  ]
+}

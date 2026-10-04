@@ -1,0 +1,60 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  go-test:
+    name: Go build & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go build ./...
+      - run: go test -race -cover ./...
+
+  go-lint:
+    name: Go lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12.2
+
+  docs-sync:
+    name: Generated docs in sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: make docs
+      - run: git diff --exit-code docs/
+
+  python-demos:
+    name: Python demos & cross-language gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - uses: astral-sh/setup-uv@v8.2.0
+      - name: Lint and test every Python app
+        run: |
+          make py-lint
+          make py-test
+      - name: Cross-language conformance gate (Python emits, Go judges)
+        run: make demo-conformance

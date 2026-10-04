@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-demo
+  labels:
+    app.kubernetes.io/name: agent-demo
+    app.kubernetes.io/part-of: genai-conformance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agent-demo
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agent-demo
+        app.kubernetes.io/part-of: genai-conformance
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: agent-demo
+          image: genai-agent-demo:local
+          imagePullPolicy: Never
+          env:
+            # The compliant app takes the production-shaped path through
+            # the collector.
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://collector:4318
+          ports:
+            - name: http
+              containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-demo
+  labels:
+    app.kubernetes.io/name: agent-demo
+    app.kubernetes.io/part-of: genai-conformance
+spec:
+  selector:
+    app.kubernetes.io/name: agent-demo
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-demo-noncompliant
+  labels:
+    app.kubernetes.io/name: agent-demo-noncompliant
+    app.kubernetes.io/part-of: genai-conformance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: agent-demo-noncompliant
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: agent-demo-noncompliant
+        app.kubernetes.io/part-of: genai-conformance
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: agent-demo
+          image: genai-agent-demo:local
+          imagePullPolicy: Never
+          env:
+            # Bypasses the collector on purpose: the gateway judges the raw
+            # application output, not the pipeline's cleaned-up version.
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://gateway:4318
+            - name: DEMO_NONCOMPLIANT
+              value: "1"
+          ports:
+            - name: http
+              containerPort: 8000
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-demo-noncompliant
+  labels:
+    app.kubernetes.io/name: agent-demo-noncompliant
+    app.kubernetes.io/part-of: genai-conformance
+spec:
+  selector:
+    app.kubernetes.io/name: agent-demo-noncompliant
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

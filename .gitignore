@@ -1,0 +1,49 @@
+# Build output
+/bin/
+/dist/
+/out/
+/apps/*/out/
+
+# Go
+*.test
+*.prof
+coverage.out
+coverage.html
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node (mermaid-cli)
+node_modules/
+
+# Environment / secrets — never commit real keys; see .env.example
+.env
+.env.*
+!.env.example
+
+# Local compose overrides (auto-merged into docker-compose.yaml)
+docker-compose.override.y*ml
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Local cluster artifacts
+/kubeconfig-kind
+
+# Claude Code local state (agent worktrees, personal settings/instructions);
+# shared config such as .claude/settings.json, commands/ and agents/ stays trackable
+.claude/worktrees/
+.claude/settings.local.json
+CLAUDE.local.md

@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph cluster["kind cluster · namespace genai-conformance"]
+        direction LR
+        J["Job: traffic<br/><i>bounded conversations</i>"]
+        subgraph demos["demo workloads"]
+            AD["Deploy: agent-demo"]
+            LG["Deploy: langgraph-demo"]
+            NC["Deploy: agent-demo-noncompliant"]
+        end
+        CO["Deploy: collector<br/><i>otel-collector-contrib</i>"]
+        GW["Deploy: gateway<br/><i>probes · limits · non-root</i>"]
+
+        J -->|HTTP /ask| AD
+        J -->|HTTP /ask| NC
+        AD -->|OTLP| CO
+        LG -->|OTLP| CO
+        J -->|OTLP| CO
+        CO -->|OTLP| GW
+        NC -.->|OTLP direct| GW
+    end
+
+    E2E["hack/e2e-kind.sh<br/>asserts: clean apps = 1.0,<br/>broken app &lt; 0.8 + golden rules"] -->|port-forward /api/report| GW

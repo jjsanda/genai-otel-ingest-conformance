@@ -1,0 +1,48 @@
+[project]
+name = "agent-demo"
+version = "0.1.0"
+description = "Hand-instrumented GenAI agent emitting OpenTelemetry GenAI semconv telemetry (demo A of genai-otel-ingest-conformance)"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "httpx",
+    "opentelemetry-api==1.43.0",
+    "opentelemetry-sdk==1.43.0",
+    "opentelemetry-exporter-otlp-proto-http==1.43.0",
+    "opentelemetry-instrumentation-fastapi==0.64b0",
+]
+
+[project.optional-dependencies]
+# Real-provider mode: the same instrumentation runs against live APIs when
+# OPENAI_API_KEY / ANTHROPIC_API_KEY is set. Kept optional so the default
+# install and CI need no vendor SDKs.
+real = [
+    "openai",
+    "anthropic",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent_demo"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

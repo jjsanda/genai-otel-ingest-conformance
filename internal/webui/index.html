@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GenAI conformance report</title>
+<style>
+  /* Design tokens (dark-first; light values swap in one place). */
+  :root {
+    --page:        #0d0d0d;
+    --surface:     #1a1a19;
+    --ink:         #ffffff;
+    --ink-2:       #c3c2b7;
+    --ink-muted:   #898781;
+    --hairline:    #2c2c2a;
+    --border:      rgba(255, 255, 255, 0.10);
+    --good:        #0ca30c;
+    --warning:     #fab219;
+    --critical:    #d03b3b;
+    --info:        #3987e5;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --page:      #f9f9f7;
+      --surface:   #fcfcfb;
+      --ink:       #0b0b0b;
+      --ink-2:     #52514e;
+      --ink-muted: #898781;
+      --hairline:  #e1e0d9;
+      --border:    rgba(11, 11, 11, 0.10);
+      --good:      #0ca30c;
+      --warning:   #b97f00; /* stepped darker: label text must clear the light surface */
+      --critical:  #d03b3b;
+      --info:      #2a78d6;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--page); color: var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  h1 { font-size: 18px; margin: 0; font-weight: 650; }
+  .meta { color: var(--ink-2); font-size: 12.5px; }
+  .meta a { color: var(--info); text-decoration: none; }
+  .meta a:hover { text-decoration: underline; }
+  #status { margin-left: auto; color: var(--ink-muted); font-size: 12px; }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px 16px;
+  }
+  .tile .label { color: var(--ink-2); font-size: 12px; letter-spacing: 0.02em; }
+  .tile .value { font-size: 28px; font-weight: 650; margin-top: 2px; }
+  .tile .sub { color: var(--ink-muted); font-size: 12px; margin-top: 2px; }
+
+  section { margin-bottom: 24px; }
+  h2 { font-size: 13px; font-weight: 650; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 8px; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  th, td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--hairline); font-size: 13px; }
+  thead th { border-top: none; color: var(--ink-muted); font-weight: 600; font-size: 12px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:hover { background: rgba(137, 135, 129, 0.08); }
+
+  .sev { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+  .sev .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .sev-ERROR .dot { background: var(--critical); }
+  .sev-WARNING .dot { background: var(--warning); }
+  .sev-INFO .dot { background: var(--info); }
+
+  .score { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+  .score .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  details { margin: 0; }
+  summary { cursor: pointer; color: var(--info); font-size: 12.5px; }
+  .exemplar { border-left: 2px solid var(--hairline); margin: 8px 0 8px 4px; padding: 2px 10px; color: var(--ink-2); font-size: 12.5px; }
+  .exemplar code { color: var(--ink); background: rgba(137, 135, 129, 0.15); padding: 1px 4px; border-radius: 3px; }
+  .fix { color: var(--ink-muted); }
+  .empty { background: var(--surface); border: 1px dashed var(--border); border-radius: 8px; padding: 28px; text-align: center; color: var(--ink-2); }
+  code.inline { background: rgba(137, 135, 129, 0.15); padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>GenAI telemetry conformance</h1>
+  <span class="meta" id="pin"></span>
+  <span id="status">connecting…</span>
+</header>
+
+<div class="tiles" id="tiles"></div>
+
+<section>
+  <h2>Services</h2>
+  <div id="services"></div>
+</section>
+
+<section>
+  <h2>Rule catalog</h2>
+  <div id="rules"></div>
+</section>
+
+<script>
+"use strict";
+
+const fmtPct = (x) => (x * 100).toFixed(1) + "%";
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function scoreColor(score) {
+  if (score >= 0.95) return "var(--good)";
+  if (score >= 0.80) return "var(--warning)";
+  return "var(--critical)";
+}
+
+function tile(label, value, sub, color) {
+  return `<div class="tile"><div class="label">${esc(label)}</div>` +
+    `<div class="value"${color ? ` style="color:${color}"` : ""}>${value}</div>` +
+    (sub ? `<div class="sub">${esc(sub)}</div>` : "") + `</div>`;
+}
+
+function sevChip(sev) {
+  return `<span class="sev sev-${esc(sev)}"><span class="dot"></span>${esc(sev)}</span>`;
+}
+
+function whereOf(f) {
+  if (f.span_name) return `span <code>${esc(f.span_name)}</code>`;
+  if (f.metric) return `metric <code>${esc(f.metric)}</code>`;
+  if (f.event_name) return `event <code>${esc(f.event_name)}</code>`;
+  if (f.trace_id) return `trace <code>${esc(f.trace_id.slice(0, 12))}</code>`;
+  return "resource";
+}
+
+function render(rep) {
+  document.getElementById("pin").innerHTML =
+    `semconv pin <a href="${esc(rep.semconv.repo)}/tree/${esc(rep.semconv.sha)}" rel="noopener">` +
+    `<code class="inline">${esc(rep.semconv.sha.slice(0, 12))}</code></a> · ${esc(rep.tool)} ${esc(rep.version)}`;
+
+  const s = rep.summary;
+  document.getElementById("tiles").innerHTML =
+    tile("Overall score", fmtPct(s.score), `${s.passed}/${s.checks} checks passed`, scoreColor(s.score)) +
+    tile("Errors", s.errors, "must fix", s.errors ? "var(--critical)" : undefined) +
+    tile("Warnings", s.warnings, "should fix", s.warnings ? "var(--warning)" : undefined) +
+    tile("Hints", s.infos, "informational") +
+    tile("Services observed", Object.keys(rep.services).length);
+
+  const services = Object.entries(rep.services).sort((a, b) => a[0].localeCompare(b[0]));
+  document.getElementById("services").innerHTML = services.length === 0
+    ? `<div class="empty">No GenAI telemetry received yet — point an OTLP exporter at this gateway (gRPC :4317 / HTTP :4318).</div>`
+    : `<table><thead><tr><th>Service</th><th class="num">Score</th><th class="num">Checks</th>` +
+      `<th class="num">Errors</th><th class="num">Warnings</th><th class="num">Hints</th></tr></thead><tbody>` +
+      services.map(([name, sv]) =>
+        `<tr><td>${esc(name)}</td>` +
+        `<td class="num"><span class="score"><span class="dot" style="background:${scoreColor(sv.score)}"></span>${fmtPct(sv.score)}</span></td>` +
+        `<td class="num">${sv.checks}</td><td class="num">${sv.errors}</td>` +
+        `<td class="num">${sv.warnings}</td><td class="num">${sv.infos}</td></tr>`).join("") +
+      `</tbody></table>`;
+
+  document.getElementById("rules").innerHTML =
+    `<table><thead><tr><th>Rule</th><th>Severity</th><th>Checks for</th><th class="num">Findings</th></tr></thead><tbody>` +
+    rep.rules.map((r) => {
+      const exemplars = (r.exemplars || []).map((f) =>
+        `<div class="exemplar">${whereOf(f)} <em>(${esc(f.service)})</em>: ${esc(f.message)}` +
+        (f.remediation ? `<br><span class="fix">fix: ${esc(f.remediation)}</span>` : "") + `</div>`).join("");
+      const count = r.count
+        ? `<details><summary>${r.count}</summary>${exemplars}</details>`
+        : `<span style="color:var(--ink-muted)">0</span>`;
+      return `<tr><td><a href="${esc(r.doc_url)}" rel="noopener" style="color:var(--info);text-decoration:none">${esc(r.rule_id)}</a></td>` +
+        `<td>${sevChip(r.severity)}</td><td style="color:var(--ink-2)">${esc(r.brief)}</td>` +
+        `<td class="num">${count}</td></tr>`;
+    }).join("") + `</tbody></table>`;
+}
+
+async function refresh() {
+  try {
+    const res = await fetch("/api/report", { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    render(await res.json());
+    document.getElementById("status").textContent =
+      "live · updated " + new Date().toLocaleTimeString();
+  } catch (err) {
+    document.getElementById("status").textContent = "report unavailable (" + err.message + ")";
+  }
+}
+
+refresh();
+setInterval(refresh, 3000);
+</script>
+</body>
+</html>

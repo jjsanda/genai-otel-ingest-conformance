@@ -1,0 +1,35 @@
+# Event (log record with event_name) conformance matrices.
+events:
+  gen_ai.evaluation.result:
+    doc: gen-ai-events.md
+    brief: Result of evaluating GenAI output for quality, accuracy, or other characteristics.
+    association: >
+      SHOULD be parented to the GenAI operation span being evaluated when
+      possible (trace/span id on the log record), or carry gen_ai.response.id
+      when a span id is not available.
+    attributes:
+      required: [gen_ai.evaluation.name]
+      conditionally_required:
+        gen_ai.evaluation.score.value: If applicable.
+        gen_ai.evaluation.score.label: If applicable.
+        error.type: If the evaluation ended in an error.
+      recommended: [gen_ai.evaluation.explanation, gen_ai.response.id]
+
+  gen_ai.client.inference.operation.details:
+    doc: gen-ai-events.md
+    brief: Opt-in event carrying full inference details (chat history and parameters) independently from traces.
+    content_opt_in: true
+    attributes:
+      required: [gen_ai.operation.name, gen_ai.provider.name]
+      conditionally_required:
+        gen_ai.request.model: If available.
+
+  gen_ai.client.operation.exception:
+    doc: gen-ai-exceptions.md
+    brief: Exception during a GenAI client operation (API errors, rate limiting, timeouts).
+    severity_number: 13 # WARN, per the exceptions doc
+    attributes:
+      conditionally_required:
+        exception.type: Required if exception.message is not set, recommended otherwise.
+        exception.message: Required if exception.type is not set, recommended otherwise.
+      recommended: [exception.stacktrace]

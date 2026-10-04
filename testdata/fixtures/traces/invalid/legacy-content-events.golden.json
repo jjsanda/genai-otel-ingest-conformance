@@ -1,0 +1,16 @@
+{
+  "exit_code": 1,
+  "score": 0.9473684210526315,
+  "checks": 19,
+  "passed": 18,
+  "findings": [
+    {
+      "rule_id": "GENAI-SPAN-012",
+      "severity": "ERROR"
+    },
+    {
+      "rule_id": "GENAI-SPAN-012",
+      "severity": "ERROR"
+    }
+  ]
+}

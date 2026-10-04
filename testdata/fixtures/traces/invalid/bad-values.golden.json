@@ -1,0 +1,61 @@
+{
+  "exit_code": 1,
+  "score": 0.5263157894736842,
+  "checks": 19,
+  "passed": 10,
+  "findings": [
+    {
+      "rule_id": "GENAI-SPAN-005",
+      "severity": "ERROR",
+      "attribute": "gen_ai.response.finish_reasons"
+    },
+    {
+      "rule_id": "GENAI-SPAN-005",
+      "severity": "ERROR",
+      "attribute": "gen_ai.usage.input_tokens"
+    },
+    {
+      "rule_id": "GENAI-SPAN-006",
+      "severity": "ERROR",
+      "attribute": "gen_ai.usage.output_tokens"
+    },
+    {
+      "rule_id": "GENAI-SPAN-007",
+      "severity": "ERROR",
+      "attribute": "error.type"
+    },
+    {
+      "rule_id": "GENAI-SPAN-008",
+      "severity": "ERROR",
+      "attribute": "server.port"
+    },
+    {
+      "rule_id": "GENAI-SPAN-013",
+      "severity": "ERROR",
+      "attribute": "gen_ai.output.type"
+    },
+    {
+      "rule_id": "GENAI-SPAN-003",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-SPAN-004",
+      "severity": "WARNING"
+    },
+    {
+      "rule_id": "GENAI-SPAN-010",
+      "severity": "WARNING",
+      "attribute": "gen_ai.response.model"
+    },
+    {
+      "rule_id": "GENAI-SPAN-015",
+      "severity": "WARNING",
+      "attribute": "gen_ai.usage.total_tokens"
+    },
+    {
+      "rule_id": "GENAI-SPAN-014",
+      "severity": "INFO",
+      "attribute": "gen_ai.provider.name"
+    }
+  ]
+}

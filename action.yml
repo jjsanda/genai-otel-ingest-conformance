@@ -1,0 +1,61 @@
+name: GenAI Telemetry Conformance
+description: >-
+  Validate recorded OTLP telemetry (traces/metrics/logs) against the
+  OpenTelemetry GenAI semantic conventions and fail the build on violations.
+author: jjsanda
+branding:
+  icon: check-circle
+  color: purple
+
+inputs:
+  files:
+    description: >-
+      Space-separated telemetry files: *.traces.binpb / *.metrics.binpb /
+      *.logs.binpb (OTLP protobuf), *.json (OTLP/JSON), or *.jsonl
+      (collector file exporter).
+    required: true
+  format:
+    description: "Report format: markdown, json, or junit."
+    default: markdown
+  strict:
+    description: Fail on any finding, not only ERROR-level ones.
+    default: "false"
+  report-path:
+    description: Also write the report to this file (useful for junit upload).
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v6
+      with:
+        go-version: stable
+        cache: false
+    - name: Validate telemetry
+      shell: bash
+      env:
+        INPUT_FILES: ${{ inputs.files }}
+        INPUT_FORMAT: ${{ inputs.format }}
+        INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_REPORT_PATH: ${{ inputs.report-path }}
+      run: |
+        set -euo pipefail
+        args=(--format "$INPUT_FORMAT")
+        [ "$INPUT_STRICT" = "true" ] && args+=(--strict)
+        [ -n "$INPUT_REPORT_PATH" ] && args+=(-o "$INPUT_REPORT_PATH")
+
+        # Build from the action's own checkout: $GITHUB_ACTION_PATH holds
+        # exactly the ref the workflow pinned (works for private repos too,
+        # unlike `go run module@ref` through the module proxy).
+        (cd "$GITHUB_ACTION_PATH" && go build -o "$RUNNER_TEMP/genai-conformance" ./cmd/genai-conformance)
+
+        status=0
+        # shellcheck disable=SC2086
+        "$RUNNER_TEMP/genai-conformance" validate "${args[@]}" $INPUT_FILES | tee report.out || status=$?
+
+        # Markdown reports read nicely in the job summary.
+        if [ "$INPUT_FORMAT" = "markdown" ] && [ -z "$INPUT_REPORT_PATH" ]; then
+          cat report.out >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit "$status"

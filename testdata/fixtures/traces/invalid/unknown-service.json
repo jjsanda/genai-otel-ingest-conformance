@@ -1,0 +1,29 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": []
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "anonymous.tool.runner"},
+          "spans": [
+            {
+              "traceId": "deadbeefdeadbeefdeadbeefdeadbeef",
+              "spanId": "deadbeefdeadbeef",
+              "name": "run tool",
+              "kind": 1,
+              "startTimeUnixNano": "1751443600000000000",
+              "endTimeUnixNano": "1751443600250000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "execute_tool"}},
+                {"key": "gen_ai.tool.call.id", "value": {"stringValue": "call_0000001"}}
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

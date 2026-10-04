@@ -1,0 +1,56 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "prompt-logger"}},
+          {"key": "service.version", "value": {"stringValue": "1.0.3"}},
+          {"key": "telemetry.sdk.name", "value": {"stringValue": "opentelemetry"}},
+          {"key": "telemetry.sdk.language", "value": {"stringValue": "python"}},
+          {"key": "telemetry.sdk.version", "value": {"stringValue": "1.30.0"}}
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": {"name": "prompt.logger", "version": "1.0.0"},
+          "spans": [
+            {
+              "traceId": "c0ffee5e1ec7eddeadbeef0123456789",
+              "spanId": "c0ffee5e1ec7edde",
+              "name": "chat claude-sonnet-4-5",
+              "kind": 3,
+              "startTimeUnixNano": "1751443500000000000",
+              "endTimeUnixNano": "1751443502500000000",
+              "attributes": [
+                {"key": "gen_ai.operation.name", "value": {"stringValue": "chat"}},
+                {"key": "gen_ai.provider.name", "value": {"stringValue": "anthropic"}},
+                {"key": "gen_ai.request.model", "value": {"stringValue": "claude-sonnet-4-5"}},
+                {"key": "gen_ai.response.model", "value": {"stringValue": "claude-sonnet-4-5"}},
+                {"key": "gen_ai.response.finish_reasons", "value": {"arrayValue": {"values": [{"stringValue": "stop"}]}}},
+                {"key": "gen_ai.usage.input_tokens", "value": {"intValue": "77"}},
+                {"key": "gen_ai.usage.output_tokens", "value": {"intValue": "132"}}
+              ],
+              "events": [
+                {
+                  "timeUnixNano": "1751443500050000000",
+                  "name": "gen_ai.content.prompt",
+                  "attributes": [
+                    {"key": "gen_ai.prompt", "value": {"stringValue": "[{\"role\": \"user\", \"content\": \"What is the capital of France?\"}]"}}
+                  ]
+                },
+                {
+                  "timeUnixNano": "1751443502400000000",
+                  "name": "gen_ai.choice",
+                  "attributes": [
+                    {"key": "gen_ai.completion", "value": {"stringValue": "{\"role\": \"assistant\", \"content\": \"Paris.\"}"}}
+                  ]
+                }
+              ],
+              "status": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

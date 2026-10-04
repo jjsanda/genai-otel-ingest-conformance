@@ -1,0 +1,20 @@
+flowchart LR
+    subgraph apps["🤖 AI applications under test"]
+        A["Agent demo<br/><i>hand-instrumented</i>"]
+        B["LangGraph demo<br/><i>framework bridge</i>"]
+        N["Agent demo<br/><i>DEMO_NONCOMPLIANT=1</i>"]
+    end
+
+    C["OpenTelemetry Collector<br/><i>batching · in-flight remediation</i>"]
+    G["<b>Conformance gateway</b><br/>OTLP ingest → 32-rule engine"]
+    R["📋 Live report<br/>score · findings · fixes"]
+    P["Prometheus"]
+    D["📊 Grafana dashboard"]
+
+    A -- "OTLP (clean)" --> C
+    B -- "OTLP (clean)" --> C
+    C -- "production-shaped path" --> G
+    N -. "OTLP direct — nothing<br/>papers over its violations" .-> G
+    G --> R
+    G -- self-metrics --> P
+    P --> D

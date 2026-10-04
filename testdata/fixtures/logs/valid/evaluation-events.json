@@ -1,0 +1,51 @@
+{
+  "resourceLogs": [
+    {
+      "resource": {
+        "attributes": [
+          {"key": "service.name", "value": {"stringValue": "demo-eval-runner"}},
+          {"key": "service.version", "value": {"stringValue": "1.2.0"}},
+          {"key": "telemetry.sdk.name", "value": {"stringValue": "opentelemetry"}},
+          {"key": "telemetry.sdk.language", "value": {"stringValue": "python"}},
+          {"key": "telemetry.sdk.version", "value": {"stringValue": "1.43.0"}}
+        ]
+      },
+      "scopeLogs": [
+        {
+          "scope": {"name": "demo.evals", "version": "0.1.0"},
+          "logRecords": [
+            {
+              "timeUnixNano": "1751443205000000000",
+              "observedTimeUnixNano": "1751443205000000000",
+              "severityNumber": 9,
+              "severityText": "INFO",
+              "eventName": "gen_ai.evaluation.result",
+              "traceId": "5b8efff798038103d269b633813fc60c",
+              "spanId": "eee19b7ec3c1b174",
+              "attributes": [
+                {"key": "gen_ai.evaluation.name", "value": {"stringValue": "groundedness"}},
+                {"key": "gen_ai.evaluation.score.value", "value": {"doubleValue": 0.87}},
+                {"key": "gen_ai.evaluation.score.label", "value": {"stringValue": "grounded"}},
+                {"key": "gen_ai.evaluation.explanation", "value": {"stringValue": "Answer overlaps retrieved documents on 87% of content tokens."}},
+                {"key": "gen_ai.response.id", "value": {"stringValue": "chatcmpl-9xYzAbC123"}}
+              ]
+            },
+            {
+              "timeUnixNano": "1751443205100000000",
+              "observedTimeUnixNano": "1751443205100000000",
+              "severityNumber": 13,
+              "severityText": "WARN",
+              "eventName": "gen_ai.client.operation.exception",
+              "traceId": "5b8efff798038103d269b633813fc60c",
+              "spanId": "eee19b7ec3c1b175",
+              "attributes": [
+                {"key": "exception.type", "value": {"stringValue": "RateLimitError"}},
+                {"key": "exception.message", "value": {"stringValue": "429 Too Many Requests (retried successfully)"}}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
